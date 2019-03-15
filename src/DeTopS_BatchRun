@@ -1,0 +1,32 @@
+#!/bin/bash
+#This script will run DeTopS for every combination of input sets 
+
+FILE_LOCATION=$1
+START_NUM=$2
+DEVICE=$3
+for i in $(seq $START_NUM 6 110000)
+do
+	FILE_A_FIRST="$FILE_LOCATION$i.txt"
+	FILE_A_LAST=$((i + 5))
+	FILE_A_LAST="$FILE_LOCATION$FILE_A_LAST.txt"
+	if [[ ! -e $FILE_A_FIRST || ! -e $FILE_A_LAST ]]; 
+	then
+		continue
+	fi
+	
+	for j in $(seq $i 6 110000)
+	do
+		FILE_B_FIRST="$FILE_LOCATION$j.txt"
+		FILE_B_LAST=$((j + 5))
+		FILE_B_LAST="$FILE_LOCATION$FILE_B_LAST.txt"
+		if [[ ! -e $FILE_B_FIRST || ! -e $FILE_B_LAST ]];
+		then
+			continue
+		fi
+		#echo "$FILE_A_FIRST $FILE_A_LAST $FILE_B_FIRST $FILE_B_LAST"
+		echo "Run -gpu $DEVICE -d -b 3 -o 512 -md 12 -fd 12 $FILE_LOCATION $i $j"
+		MEASURE=$(./a -gpu $DEVICE-d -b 3 -o 512 -md 8 -fd 12 $FILE_LOCATION $i $j | grep '.*Measure.*' | cut -d ':' -f2)
+		echo "Set A: $i Set B: $j Measure: $MEASURE" >> DeTopS_BatchResults.txt
+	done
+done
+

@@ -1,0 +1,13 @@
+#!/bin/bash
+#This script will run DeTopS for a given set of input files 
+# for every possible maximum depth
+
+FILE_PATTERN=$1
+
+for i in {18..2}
+do
+	echo "Run -d -b 3 -o 18 -t -md $i -fd 18 $FILE_PATTERN $2 $3"
+	MEASURE=$(./b -d -b 3 -o 18 -t -md $i -fd 18 $FILE_PATTERN $2 $3 | grep '.*Measure.*' | cut -d ':' -f2)
+	echo "File: $FILE_PATTERN Set1: $2 Set2: $3  Measure:$MEASURE"
+done
+
